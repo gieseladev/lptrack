@@ -1,8 +1,6 @@
 workflow "upload to PyPI on tag" {
   on = "create"
-  resolves = [
-    "upload to PyPI",
-  ]
+  resolves = "upload to PyPI"
 }
 
 action "filter tag" {
@@ -38,4 +36,9 @@ action "upload to PyPI" {
     "TWINE_PASSWORD",
   ]
   needs = "create distribution"
+}
+
+workflow "test on push" {
+  on = "push"
+  resolves = "test"
 }

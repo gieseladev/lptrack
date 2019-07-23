@@ -12,10 +12,11 @@ import base64
 import io
 from typing import Union
 
-# needs to come after track import
-from .format import *
 from .track import *
 from .versions import LATEST_VERSION
+
+# needs to come after track import
+from .format import *
 
 __author__ = "Giesela Inc."
 __version__ = "0.0.1"

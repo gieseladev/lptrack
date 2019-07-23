@@ -4,6 +4,10 @@ from typing import Optional
 __all__ = ["Track"]
 
 
+# TODO source name
+
+# TODO source manager details
+
 @dataclasses.dataclass(unsafe_hash=True)
 class Track:
     """Information contained in a track data message body.

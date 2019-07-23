@@ -13,6 +13,4 @@ def test_encode():
 
     track = lptrack.encode(info)
 
-    print(lptrack.decode(track))
-
     assert track == b"QAAAjwIAOFdpc2luICYgWWFuZGVsLCBSb21lbyBTYW50b3MgLSBBdWxsYW5kbyAoT2ZmaWNpYWwgVmlkZW8pAA5XaXNpbiAmIFlhbmRlbAAAAAAAA+QYAAstbjlrcmtTYi11ZwABACtodHRwczovL3d3dy55b3V0dWJlLmNvbS93YXRjaD92PS1uOWtya1NiLXVn"

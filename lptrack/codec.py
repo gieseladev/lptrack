@@ -1,6 +1,9 @@
+"""Provides the reader and writer for converting between Python primitives and
+their byte representation."""
+
 import io
 import struct
-from typing import Optional
+from typing import BinaryIO, Optional
 
 __all__ = ["Reader", "Writer"]
 
@@ -12,13 +15,13 @@ _FORMAT_USHORT = ">H"
 
 
 class Reader:
-    _stream: io.IOBase
+    _stream: BinaryIO
 
-    def __init__(self, stream: io.IOBase) -> None:
+    def __init__(self, stream: BinaryIO) -> None:
         self._stream = stream
 
     @property
-    def stream(self) -> io.IOBase:
+    def stream(self) -> BinaryIO:
         return self._stream
 
     def read_bool(self) -> bool:
@@ -47,16 +50,16 @@ class Reader:
 
 
 class Writer:
-    _stream: io.RawIOBase
+    _stream: BinaryIO
 
-    def __init__(self, stream: io.RawIOBase = None) -> None:
+    def __init__(self, stream: BinaryIO = None) -> None:
         if stream is None:
             stream = io.BytesIO()
 
         self._stream = stream
 
     @property
-    def stream(self) -> io.IOBase:
+    def stream(self) -> BinaryIO:
         return self._stream
 
     def write_bool(self, data: bool) -> None:

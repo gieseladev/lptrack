@@ -4,7 +4,7 @@ representation.
 The library provides the two simple methods `decode` and `encode` which convert
 from `Track` instances to their encoded representation and vice versa.
 
-If you want to go deeper you can use the `Decoder` and `Encoder` classes
+If you want to go deeper you can use the `TrackDecoder` and `TrackEncoder` classes
 directly.
 """
 
@@ -12,6 +12,8 @@ import base64
 import io
 from typing import Union
 
+from . import codec
+from .sources import *
 from .track import *
 from .versions import LATEST_VERSION
 
@@ -19,7 +21,7 @@ from .versions import LATEST_VERSION
 from .format import *
 
 __author__ = "Giesela Inc."
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 
 def decode(data: Union[str, bytes]) -> Track:
@@ -34,7 +36,8 @@ def decode(data: Union[str, bytes]) -> Track:
         the version of the data format.
     """
     decoded = base64.b64decode(data)
-    return Decoder(io.BytesIO(decoded)).decode()
+    stream = codec.MessageInput(io.BytesIO(decoded))
+    return TrackDecoder().decode(stream)
 
 
 def encode(track: Track) -> bytes:
@@ -50,5 +53,6 @@ def encode(track: Track) -> bytes:
         Base 64 encoded track data as `bytes`.
     """
     buf = io.BytesIO()
-    Encoder(buf).encode(track)
+    stream = codec.MessageOutput(buf)
+    TrackEncoder().encode(stream, track)
     return base64.b64encode(buf.getvalue())

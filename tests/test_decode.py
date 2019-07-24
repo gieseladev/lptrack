@@ -7,11 +7,14 @@ def test_decode():
     info = lptrack.decode(track)
 
     assert info == lptrack.Track(
-        title="Wisin & Yandel, Romeo Santos - Aullando (Official Video)",
-        author="Wisin & Yandel",
-        duration=255,
-        identifier="-n9krkSb-ug",
-        is_stream=False,
-        uri="https://www.youtube.com/watch?v=-n9krkSb-ug",
         version=2,
+        source=lptrack.Youtube(),
+        info=lptrack.TrackInfo(
+            title="Wisin & Yandel, Romeo Santos - Aullando (Official Video)",
+            author="Wisin & Yandel",
+            duration=255,
+            identifier="-n9krkSb-ug",
+            is_stream=False,
+            uri="https://www.youtube.com/watch?v=-n9krkSb-ug",
+        ),
     )

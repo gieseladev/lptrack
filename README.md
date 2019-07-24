@@ -27,17 +27,22 @@ pip install lptrack
 ```python
 import lptrack
 
-info = lptrack.Track(
-    title="A song",
-    author="Some random artist",
-    duration=120,                   # duration is in seconds!
-    identifier="dQw4w9WgXcQ",
-    is_stream=False,
+track = lptrack.Track(
+    version = 2,
+    source = lptrack.Youtube(),
+
+    info = lptrack.TrackInfo(
+        title="A song",
+        author="Some random artist",
+        duration=120,                   # duration is in seconds!
+        identifier="dQw4w9WgXcQ",
+        is_stream=False,
+    ),
 )
 
-encoded = lptrack.encode(info)
+encoded = lptrack.encode(track)
 print(encoded)
-# b'QAAANAIABkEgc29uZwASU29tZSByYW5kb20gYXJ0aXN0AAAAAAAB1MAAC2RRdzR3OVdnWGNRAAA='
+# b'QAAARQIABkEgc29uZwASU29tZSByYW5kb20gYXJ0aXN0AAAAAAAB1MAAC2RRdzR3OVdnWGNRAAAAB3lvdXR1YmUAAAAAAAAAAA=='
 
 decoded = lptrack.decode(encoded)
 

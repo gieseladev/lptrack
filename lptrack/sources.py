@@ -19,6 +19,9 @@ __all__ = ["AudioSource",
 class AudioSource(abc.ABC):
     """Audio source."""
 
+    def __str__(self) -> str:
+        return self.get_name()
+
     @classmethod
     @abc.abstractmethod
     def get_name(cls) -> str:
@@ -39,6 +42,9 @@ class AudioSource(abc.ABC):
 
 def create_unknown_source(name: str) -> Type[AudioSource]:
     class UnknownSource(AudioSource):
+        def __repr__(self) -> str:
+            return f"Unknown({name!r})"
+
         @classmethod
         def get_name(cls) -> str:
             return name
@@ -84,6 +90,9 @@ def get_source(name: str) -> Type[AudioSource]:
 
 
 class _BuiltinAudioSource(AudioSource):
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}()"
+
     @classmethod
     def get_name(cls) -> str:
         try:

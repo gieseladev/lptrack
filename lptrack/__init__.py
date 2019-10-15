@@ -12,7 +12,7 @@ import base64
 import io
 from typing import Union
 
-from . import codec
+from . import codec, strcodec
 from .sources import *
 from .track import *
 from .versions import LATEST_VERSION
@@ -24,11 +24,12 @@ __author__ = "Giesela Inc."
 __version__ = "0.1.0"
 
 
-def decode(data: Union[str, bytes]) -> Track:
+def decode(data: Union[str, bytes], *, string_codec: strcodec.Codec = None) -> Track:
     """Decode a base 64 string or bytes to a track.
 
     Args:
         data: Base 64 track data as used in LavaPlayer to decode.
+        string_codec: String codec to use for decoding strings.
 
     Returns:
         Track information contained in the encoded data.
@@ -36,23 +37,23 @@ def decode(data: Union[str, bytes]) -> Track:
         the version of the data format.
     """
     decoded = base64.b64decode(data)
-    stream = codec.MessageInput(io.BytesIO(decoded))
+    stream = codec.MessageInput(io.BytesIO(decoded), string_codec=string_codec)
     return TrackDecoder().decode(stream)
 
 
-def encode(track: Track) -> bytes:
+def encode(track: Track, *, string_codec: strcodec.Codec = None) -> bytes:
     """Encode a track to its LavaPlayer representation.
 
     Args:
         track: Track information to be encoded.
             Note that the version of the track will be used as the format
             version.
-
+        string_codec: String codec to use for encoding strings.
 
     Returns:
         Base 64 encoded track data as `bytes`.
     """
     buf = io.BytesIO()
-    stream = codec.MessageOutput(buf)
+    stream = codec.MessageOutput(buf, string_codec=string_codec)
     TrackEncoder().encode(stream, track)
     return base64.b64encode(buf.getvalue())

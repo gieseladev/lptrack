@@ -25,5 +25,5 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=("docs", "tests")),
 
     python_requires="~=3.7",
-    install_requires=[],
+    install_requires=["ftfy"],
 )

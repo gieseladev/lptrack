@@ -102,6 +102,6 @@ class TrackEncoder:
 
         body_writer.write_utf(track.source.get_name())
         track.source.encode(track, body_writer)
-        body_writer.write_long(int(track.position * 1000))
+        body_writer.write_long(round(track.position * 1000))
 
         stream.commit(flags)

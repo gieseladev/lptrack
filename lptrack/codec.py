@@ -5,6 +5,8 @@ import io
 import struct
 from typing import BinaryIO, Optional, Union
 
+from . import strcodec
+
 __all__ = ["HasStream",
            "Reader", "Writer",
            "MessageInput", "MessageOutput"]
@@ -25,12 +27,15 @@ class HasStream(abc.ABC):
 
 class Reader(HasStream):
     _stream: BinaryIO
+    _string_codec: strcodec.Codec
 
-    def __init__(self, stream: Union[BinaryIO, HasStream]) -> None:
+    def __init__(self, stream: Union[BinaryIO, HasStream], *,
+                 string_codec: strcodec.Codec = None) -> None:
         if isinstance(stream, HasStream):
             stream = stream.stream
 
         self._stream = stream
+        self._string_codec = string_codec or strcodec.DEFAULT
 
     @property
     def stream(self) -> BinaryIO:
@@ -52,7 +57,9 @@ class Reader(HasStream):
         return struct.unpack(_FORMAT_USHORT, self._stream.read(2))[0]
 
     def read_utf(self) -> str:
-        return self._stream.read(self.read_ushort()).decode("utf-8")
+        length = self.read_ushort()
+        data = self._stream.read(length)
+        return self._string_codec.decode(data)
 
     def read_optional_utf(self) -> Optional[str]:
         if self.read_bool():
@@ -63,14 +70,17 @@ class Reader(HasStream):
 
 class Writer:
     _stream: BinaryIO
+    _string_codec: strcodec.Codec
 
-    def __init__(self, stream: Union[BinaryIO, HasStream] = None) -> None:
+    def __init__(self, stream: Union[BinaryIO, HasStream] = None, *,
+                 string_codec: strcodec.Codec = None) -> None:
         if stream is None:
             stream = io.BytesIO()
         elif isinstance(stream, HasStream):
             stream = stream.stream
 
         self._stream = stream
+        self._string_codec = string_codec or strcodec.DEFAULT
 
     @property
     def stream(self) -> BinaryIO:
@@ -92,7 +102,7 @@ class Writer:
         self._stream.write(struct.pack(_FORMAT_USHORT, data))
 
     def write_utf(self, data: str) -> None:
-        data = data.encode("utf-8")
+        data = self._string_codec.encode(data)
         self.write_ushort(len(data))
         self._stream.write(data)
 
@@ -108,9 +118,13 @@ class MessageInput(HasStream):
     _stream: Reader
     _flags: int
     _size: int
+    _string_codec: strcodec.Codec
 
-    def __init__(self, stream: Union[BinaryIO, HasStream]) -> None:
-        self._stream = Reader(stream)
+    def __init__(self, stream: Union[BinaryIO, HasStream], *,
+                 string_codec: strcodec.Codec = None) -> None:
+        self._string_codec = string_codec or strcodec.DEFAULT
+
+        self._stream = Reader(stream, string_codec=self._string_codec)
         self._flags = 0
         self._size = 0
 
@@ -132,15 +146,19 @@ class MessageInput(HasStream):
 
         data = self._stream.stream.read(self._size)
 
-        return Reader(io.BytesIO(data))
+        return Reader(io.BytesIO(data), string_codec=self._string_codec)
 
 
 class MessageOutput(HasStream):
     _stream: Writer
     _body_stream: io.BytesIO
+    _string_codec: strcodec.Codec
 
-    def __init__(self, stream: Union[BinaryIO, HasStream]) -> None:
-        self._stream = Writer(stream)
+    def __init__(self, stream: Union[BinaryIO, HasStream], *,
+                 string_codec: strcodec.Codec = None) -> None:
+        self._string_codec = string_codec or strcodec.DEFAULT
+
+        self._stream = Writer(stream, string_codec=self._string_codec)
         self._body_stream = io.BytesIO()
 
     @property
@@ -150,7 +168,7 @@ class MessageOutput(HasStream):
     def start(self) -> Writer:
         self._body_stream.truncate(0)
         self._body_stream.seek(0)
-        return Writer(self._body_stream)
+        return Writer(self._body_stream, string_codec=self._string_codec)
 
     def commit(self, flags: int = None) -> None:
         data = self._body_stream.getvalue()

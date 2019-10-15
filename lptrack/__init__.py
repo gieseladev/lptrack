@@ -21,7 +21,7 @@ from .versions import LATEST_VERSION
 from .format import *
 
 __author__ = "Giesela Inc."
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 
 def decode(data: Union[str, bytes], *, string_codec: strcodec.Codec = None) -> Track:

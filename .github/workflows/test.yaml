@@ -14,7 +14,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -U pipenv
-          pipenv install --deploy
+          pipenv install --dev --deploy
 
       - name: Run tests
         run: pipenv run tests

@@ -1,5 +1,7 @@
 # LPTrack
 
+[![Actions Status](https://github.com/gieseladev/lptrack/workflows/Test%20on%20Push/badge.svg)](https://github.com/gieseladev/lptrack/actions)
+
 LavaPlayer encoded track encoder and decoder.
 
 
